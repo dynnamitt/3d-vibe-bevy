@@ -180,16 +180,21 @@ fn mouse_control_system(
     mut mouse_motion_events: EventReader<MouseMotion>,
     mut mouse_wheel_events: EventReader<MouseWheel>,
     mut object_query: Query<&mut Transform, With<SelectedObject>>,
+    mut contexts: EguiContexts,
 ) {
-    // Handle mouse dragging
-    if mouse_button_input.just_pressed(MouseButton::Left) {
+    // Check if mouse is over UI
+    let ctx = contexts.ctx_mut();
+    let is_mouse_over_ui = ctx.is_pointer_over_area();
+
+    // Handle mouse dragging only if not over UI
+    if mouse_button_input.just_pressed(MouseButton::Left) && !is_mouse_over_ui {
         mouse_control.is_dragging = true;
     }
     if mouse_button_input.just_released(MouseButton::Left) {
         mouse_control.is_dragging = false;
     }
 
-    if mouse_control.is_dragging {
+    if mouse_control.is_dragging && !is_mouse_over_ui {
         for event in mouse_motion_events.read() {
             if let Ok(mut transform) = object_query.get_single_mut() {
                 transform.rotate_y(event.delta.x * 0.01);
@@ -198,11 +203,13 @@ fn mouse_control_system(
         }
     }
 
-    // Handle mouse wheel for scaling
-    for event in mouse_wheel_events.read() {
-        if let Ok(mut transform) = object_query.get_single_mut() {
-            let scale_factor = 1.0 + event.y * 0.1;
-            transform.scale *= scale_factor;
+    // Handle mouse wheel for scaling only if not over UI
+    if !is_mouse_over_ui {
+        for event in mouse_wheel_events.read() {
+            if let Ok(mut transform) = object_query.get_single_mut() {
+                let scale_factor = 1.0 + event.y * 0.1;
+                transform.scale *= scale_factor;
+            }
         }
     }
 }
