@@ -88,12 +88,45 @@ fn spawn_object(
         _ => meshes.add(Mesh::from(Cuboid::new(1.0, 1.0, 1.0))),
     };
 
-    let material = materials.add(StandardMaterial {
-        base_color: Color::srgb(0.8, 0.7, 0.6),
-        metallic: 0.0,
-        perceptual_roughness: 0.5,
-        ..default()
-    });
+    // Create a completely new material each time with distinct properties
+    let material = match object_type {
+        "Cube" => materials.add(StandardMaterial {
+            base_color: Color::srgb(0.9, 0.1, 0.1),
+            metallic: 0.0,
+            perceptual_roughness: 0.5,
+            ..default()
+        }),
+        "Sphere" => materials.add(StandardMaterial {
+            base_color: Color::srgb(0.1, 0.9, 0.1),
+            metallic: 0.1,
+            perceptual_roughness: 0.4,
+            ..default()
+        }),
+        "Cylinder" => materials.add(StandardMaterial {
+            base_color: Color::srgb(0.1, 0.1, 0.9),
+            metallic: 0.2,
+            perceptual_roughness: 0.3,
+            ..default()
+        }),
+        "Torus" => materials.add(StandardMaterial {
+            base_color: Color::srgb(0.9, 0.6, 0.1),
+            metallic: 0.3,
+            perceptual_roughness: 0.6,
+            ..default()
+        }),
+        "Cone" => materials.add(StandardMaterial {
+            base_color: Color::srgb(0.9, 0.1, 0.9),
+            metallic: 0.1,
+            perceptual_roughness: 0.7,
+            ..default()
+        }),
+        _ => materials.add(StandardMaterial {
+            base_color: Color::srgb(0.8, 0.7, 0.6),
+            metallic: 0.0,
+            perceptual_roughness: 0.5,
+            ..default()
+        }),
+    };
 
     commands.spawn((
         Mesh3d(mesh),
