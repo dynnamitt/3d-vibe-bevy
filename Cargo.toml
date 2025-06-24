@@ -15,9 +15,11 @@ bevy = { version = "0.15.0", default-features = false, features = [
     "bevy_ui",
     "bevy_winit",
     "png",
-    "x11",
     "tonemapping_luts",
     "ktx2",
-    "zstd"
+    "zstd",
+    # Platform-specific windowing (Bevy automatically handles this)
+    "x11",     # Linux/Unix windowing - ignored on Windows
+    "wayland", # Modern Linux windowing - ignored on Windows  
 ] }
 bevy_egui = "0.31.0"
