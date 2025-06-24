@@ -102,48 +102,42 @@ fn spawn_object(
         _ => meshes.add(Mesh::from(Cuboid::new(1.0, 1.0, 1.0))),
     };
 
-    // Create materials with better light reflection properties
+    // Simplified materials to avoid rendering issues
     let material = match object_type {
         "Cube" => materials.add(StandardMaterial {
             base_color: Color::srgb(0.8, 0.2, 0.2), // Red
-            metallic: 0.3,
-            perceptual_roughness: 0.2, // Smoother for better reflections
-            reflectance: 0.5,
+            metallic: 0.1,
+            perceptual_roughness: 0.5,
             ..default()
         }),
         "Sphere" => materials.add(StandardMaterial {
             base_color: Color::srgb(0.2, 0.8, 0.2), // Green
-            metallic: 0.4,
-            perceptual_roughness: 0.1, // Very smooth
-            reflectance: 0.6,
+            metallic: 0.2,
+            perceptual_roughness: 0.3,
             ..default()
         }),
         "Cylinder" => materials.add(StandardMaterial {
             base_color: Color::srgb(0.2, 0.2, 0.8), // Blue
-            metallic: 0.2,
-            perceptual_roughness: 0.3,
-            reflectance: 0.4,
+            metallic: 0.0,
+            perceptual_roughness: 0.6,
             ..default()
         }),
         "Torus" => materials.add(StandardMaterial {
             base_color: Color::srgb(0.8, 0.6, 0.2), // Orange
-            metallic: 0.1,
+            metallic: 0.3,
             perceptual_roughness: 0.4,
-            reflectance: 0.3,
             ..default()
         }),
         "Cone" => materials.add(StandardMaterial {
             base_color: Color::srgb(0.8, 0.2, 0.8), // Magenta
-            metallic: 0.5,
-            perceptual_roughness: 0.15, // Smooth and reflective
-            reflectance: 0.7,
+            metallic: 0.1,
+            perceptual_roughness: 0.7,
             ..default()
         }),
         _ => materials.add(StandardMaterial {
             base_color: Color::srgb(0.8, 0.7, 0.6),
-            metallic: 0.2,
+            metallic: 0.0,
             perceptual_roughness: 0.5,
-            reflectance: 0.4,
             ..default()
         }),
     };
