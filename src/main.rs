@@ -70,6 +70,19 @@ fn setup(
         brightness: 0.25, // Increased for better material visibility
     });
 
+    // Ground plane for shadows
+    commands.spawn((
+        Mesh3d(meshes.add(Mesh::from(Plane3d::default().mesh().size(10.0, 10.0)))),
+        MeshMaterial3d(materials.add(StandardMaterial {
+            base_color: Color::srgb(0.8, 0.8, 0.8), // Light gray
+            metallic: 0.0,
+            perceptual_roughness: 0.8, // Rough surface
+            reflectance: 0.2,
+            ..default()
+        })),
+        Transform::from_xyz(0.0, -1.0, 0.0), // Position below objects
+    ));
+
     // Initial object (cube)
     spawn_object(&mut commands, &mut meshes, &mut materials, "Cube");
 }
