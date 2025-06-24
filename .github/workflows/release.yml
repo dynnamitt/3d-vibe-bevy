@@ -77,21 +77,41 @@ jobs:
           ${{ matrix.target }}-target-
 
     - name: Build release
-      run: |
-        if [ "${{ matrix.cross }}" = "true" ]; then
-          cargo build --release --target ${{ matrix.target }}
-        else
-          cargo build --release --target ${{ matrix.target }}
-        fi
+      run: cargo build --release --target ${{ matrix.target }}
 
-    - name: Create release directory
+    - name: Create release directory (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        mkdir release\visio-vibe1-${{ matrix.target }}
+        copy target\${{ matrix.target }}\release\visio-vibe1.exe release\visio-vibe1-${{ matrix.target }}\
+        copy CLAUDE.md release\visio-vibe1-${{ matrix.target }}\
+      shell: cmd
+
+    - name: Create release directory (Linux)
+      if: matrix.os == 'ubuntu-latest'
       run: |
         mkdir -p release/visio-vibe1-${{ matrix.target }}
-        cp target/${{ matrix.target }}/release/visio-vibe1* release/visio-vibe1-${{ matrix.target }}/
-        cp README.txt release/visio-vibe1-${{ matrix.target }}/ 2>/dev/null || echo "README.txt not found, skipping"
+        cp target/${{ matrix.target }}/release/visio-vibe1 release/visio-vibe1-${{ matrix.target }}/
         cp CLAUDE.md release/visio-vibe1-${{ matrix.target }}/
 
-    - name: Create README for release
+    - name: Create README for release (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        echo Visio Vibe 1 - 3D Object Viewer > release\visio-vibe1-${{ matrix.target }}\README.txt
+        echo ================================ >> release\visio-vibe1-${{ matrix.target }}\README.txt
+        echo. >> release\visio-vibe1-${{ matrix.target }}\README.txt
+        echo A Bevy-based 3D object viewer with interactive controls. >> release\visio-vibe1-${{ matrix.target }}\README.txt
+        echo. >> release\visio-vibe1-${{ matrix.target }}\README.txt
+        echo FEATURES: >> release\visio-vibe1-${{ matrix.target }}\README.txt
+        echo - Interactive 3D object viewer with multiple object types >> release\visio-vibe1-${{ matrix.target }}\README.txt
+        echo - Mouse and keyboard controls >> release\visio-vibe1-${{ matrix.target }}\README.txt
+        echo - Real-time PBR lighting and shadows >> release\visio-vibe1-${{ matrix.target }}\README.txt
+        echo. >> release\visio-vibe1-${{ matrix.target }}\README.txt
+        echo Built with Bevy 0.15.0 game engine. >> release\visio-vibe1-${{ matrix.target }}\README.txt
+      shell: cmd
+
+    - name: Create README for release (Linux)
+      if: matrix.os == 'ubuntu-latest'
       run: |
         cat > release/visio-vibe1-${{ matrix.target }}/README.txt << 'EOF'
         Visio Vibe 1 - 3D Object Viewer
