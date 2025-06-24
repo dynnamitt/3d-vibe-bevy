@@ -14,6 +14,8 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  CARGO_NET_RETRY: 10
+  CARGO_NET_GIT_FETCH_WITH_CLI: true
 
 jobs:
   build:
@@ -42,21 +44,16 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libasound2-dev libudev-dev libxkbcommon-dev
 
-    - name: Cache cargo registry
+    - name: Cache cargo registry and index
       uses: actions/cache@v4
       with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+        path: |
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: |
-          ${{ runner.os }}-cargo-registry-
-
-    - name: Cache cargo index
-      uses: actions/cache@v4
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-cargo-index-
+          ${{ runner.os }}-cargo-
 
     - name: Cache target directory
       uses: actions/cache@v4
@@ -66,8 +63,13 @@ jobs:
         restore-keys: |
           ${{ matrix.target }}-target-
 
+    - name: Download dependencies
+      run: cargo fetch --target ${{ matrix.target }}
+      timeout-minutes: 15
+
     - name: Build release
       run: cargo build --release --target ${{ matrix.target }}
+      timeout-minutes: 45
 
     - name: Create release directory (Windows)
       if: matrix.os == 'windows-latest'
