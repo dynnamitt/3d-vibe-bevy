@@ -75,11 +75,22 @@ fn setup(
         Transform::from_rotation(Quat::from_euler(EulerRot::XYZ, 0.3, 2.5, 0.0)),
     ));
 
+    // Third directional light (upper right rim light)
+    commands.spawn((
+        DirectionalLight {
+            color: Color::srgb(1.0, 1.0, 0.8), // Slightly warm white
+            illuminance: 2000.0,
+            shadows_enabled: false, // Avoid shadow conflicts
+            ..default()
+        },
+        Transform::from_rotation(Quat::from_euler(EulerRot::XYZ, -0.7, 0.8, 0.0)),
+    ));
+
     // Point light for accent lighting
     commands.spawn((
         PointLight {
             color: Color::srgb(1.0, 0.8, 0.6), // Warm orange accent
-            intensity: 2000.0,
+            intensity: 1500.0, // Slightly reduced to balance with new directional light
             radius: 10.0,
             shadows_enabled: true,
             ..default()
@@ -90,7 +101,7 @@ fn setup(
     // Reduced ambient light for better contrast
     commands.insert_resource(AmbientLight {
         color: Color::srgb(0.7, 0.8, 1.0), // Slight blue tint
-        brightness: 0.15, // Lower ambient for more dramatic shadows
+        brightness: 0.12, // Even lower ambient for more dramatic lighting
     });
 
     // Initial object (cube)
