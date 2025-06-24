@@ -53,20 +53,44 @@ fn setup(
         Transform::from_xyz(0.0, 2.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
 
-    // Light
+    // Primary directional light (main illumination)
     commands.spawn((
         DirectionalLight {
-            color: Color::WHITE,
-            illuminance: 3000.0,
+            color: Color::srgb(1.0, 0.95, 0.9), // Warm white
+            illuminance: 4000.0,
+            shadows_enabled: true,
             ..default()
         },
-        Transform::from_rotation(Quat::from_euler(EulerRot::XYZ, -0.5, -0.5, 0.0)),
+        Transform::from_rotation(Quat::from_euler(EulerRot::XYZ, -0.6, -0.4, 0.0)),
     ));
 
-    // Ambient light
+    // Secondary directional light (fill light from opposite side)
+    commands.spawn((
+        DirectionalLight {
+            color: Color::srgb(0.8, 0.9, 1.0), // Cool blue tint
+            illuminance: 1500.0,
+            shadows_enabled: false,
+            ..default()
+        },
+        Transform::from_rotation(Quat::from_euler(EulerRot::XYZ, 0.3, 2.5, 0.0)),
+    ));
+
+    // Point light for accent lighting
+    commands.spawn((
+        PointLight {
+            color: Color::srgb(1.0, 0.8, 0.6), // Warm orange accent
+            intensity: 2000.0,
+            radius: 10.0,
+            shadows_enabled: true,
+            ..default()
+        },
+        Transform::from_xyz(2.0, 3.0, 2.0),
+    ));
+
+    // Reduced ambient light for better contrast
     commands.insert_resource(AmbientLight {
-        color: Color::WHITE,
-        brightness: 0.3,
+        color: Color::srgb(0.7, 0.8, 1.0), // Slight blue tint
+        brightness: 0.15, // Lower ambient for more dramatic shadows
     });
 
     // Initial object (cube)
