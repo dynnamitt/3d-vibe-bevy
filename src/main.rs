@@ -53,55 +53,21 @@ fn setup(
         Transform::from_xyz(0.0, 2.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
 
-    // Primary directional light (main illumination)
+    // Single directional light for clean lighting
     commands.spawn((
         DirectionalLight {
-            color: Color::srgb(1.0, 0.95, 0.9), // Warm white
-            illuminance: 4000.0,
+            color: Color::WHITE,
+            illuminance: 2500.0, // Reduced intensity
             shadows_enabled: true,
             ..default()
         },
-        Transform::from_rotation(Quat::from_euler(EulerRot::XYZ, -0.6, -0.4, 0.0)),
+        Transform::from_rotation(Quat::from_euler(EulerRot::XYZ, -0.5, -0.5, 0.0)),
     ));
 
-    // Secondary directional light (fill light from opposite side)
-    commands.spawn((
-        DirectionalLight {
-            color: Color::srgb(0.8, 0.9, 1.0), // Cool blue tint
-            illuminance: 1500.0,
-            shadows_enabled: false,
-            ..default()
-        },
-        Transform::from_rotation(Quat::from_euler(EulerRot::XYZ, 0.3, 2.5, 0.0)),
-    ));
-
-    // Third directional light (upper right rim light)
-    commands.spawn((
-        DirectionalLight {
-            color: Color::srgb(1.0, 1.0, 0.8), // Slightly warm white
-            illuminance: 2000.0,
-            shadows_enabled: false, // Avoid shadow conflicts
-            ..default()
-        },
-        Transform::from_rotation(Quat::from_euler(EulerRot::XYZ, -0.7, 0.8, 0.0)),
-    ));
-
-    // Point light for accent lighting
-    commands.spawn((
-        PointLight {
-            color: Color::srgb(1.0, 0.8, 0.6), // Warm orange accent
-            intensity: 1500.0, // Slightly reduced to balance with new directional light
-            radius: 10.0,
-            shadows_enabled: true,
-            ..default()
-        },
-        Transform::from_xyz(2.0, 3.0, 2.0),
-    ));
-
-    // Reduced ambient light for better contrast
+    // Moderate ambient light for material visibility
     commands.insert_resource(AmbientLight {
-        color: Color::srgb(0.7, 0.8, 1.0), // Slight blue tint
-        brightness: 0.12, // Even lower ambient for more dramatic lighting
+        color: Color::WHITE,
+        brightness: 0.25, // Increased for better material visibility
     });
 
     // Initial object (cube)
@@ -123,42 +89,48 @@ fn spawn_object(
         _ => meshes.add(Mesh::from(Cuboid::new(1.0, 1.0, 1.0))),
     };
 
-    // Create a completely new material each time with distinct properties
+    // Create materials with better light reflection properties
     let material = match object_type {
         "Cube" => materials.add(StandardMaterial {
-            base_color: Color::srgb(0.9, 0.1, 0.1),
-            metallic: 0.0,
-            perceptual_roughness: 0.5,
+            base_color: Color::srgb(0.8, 0.2, 0.2), // Red
+            metallic: 0.3,
+            perceptual_roughness: 0.2, // Smoother for better reflections
+            reflectance: 0.5,
             ..default()
         }),
         "Sphere" => materials.add(StandardMaterial {
-            base_color: Color::srgb(0.1, 0.9, 0.1),
-            metallic: 0.1,
-            perceptual_roughness: 0.4,
+            base_color: Color::srgb(0.2, 0.8, 0.2), // Green
+            metallic: 0.4,
+            perceptual_roughness: 0.1, // Very smooth
+            reflectance: 0.6,
             ..default()
         }),
         "Cylinder" => materials.add(StandardMaterial {
-            base_color: Color::srgb(0.1, 0.1, 0.9),
+            base_color: Color::srgb(0.2, 0.2, 0.8), // Blue
             metallic: 0.2,
             perceptual_roughness: 0.3,
+            reflectance: 0.4,
             ..default()
         }),
         "Torus" => materials.add(StandardMaterial {
-            base_color: Color::srgb(0.9, 0.6, 0.1),
-            metallic: 0.3,
-            perceptual_roughness: 0.6,
+            base_color: Color::srgb(0.8, 0.6, 0.2), // Orange
+            metallic: 0.1,
+            perceptual_roughness: 0.4,
+            reflectance: 0.3,
             ..default()
         }),
         "Cone" => materials.add(StandardMaterial {
-            base_color: Color::srgb(0.9, 0.1, 0.9),
-            metallic: 0.1,
-            perceptual_roughness: 0.7,
+            base_color: Color::srgb(0.8, 0.2, 0.8), // Magenta
+            metallic: 0.5,
+            perceptual_roughness: 0.15, // Smooth and reflective
+            reflectance: 0.7,
             ..default()
         }),
         _ => materials.add(StandardMaterial {
             base_color: Color::srgb(0.8, 0.7, 0.6),
-            metallic: 0.0,
+            metallic: 0.2,
             perceptual_roughness: 0.5,
+            reflectance: 0.4,
             ..default()
         }),
     };
